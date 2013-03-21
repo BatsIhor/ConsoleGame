@@ -2,6 +2,9 @@
 
 namespace ConsoleGame
 {
+    /// <summary>
+    /// our map logic
+    /// </summary>
     public class Map
     {
         char[,] map = new char[20, 40];
