@@ -42,29 +42,63 @@ namespace ConsoleGame
         public void MoveUnit(ConsoleKeyInfo keyInfo)
         {
             Position possition = unit.GetPossition();
-            map[possition.X, possition.Y] = (char) 0;
 
-            if (keyInfo.Key == ConsoleKey.UpArrow)
+            //Clear current position.
+            map[possition.X, possition.Y] = (char)0;
+
+            if (keyInfo.Key == ConsoleKey.UpArrow && possition.X - 1 != 0 && NextIsNotTree(possition, keyInfo.Key))
             {
                 possition.X = possition.X - 1;
-                unit.SetPosition(possition);
             }
-            if (keyInfo.Key == ConsoleKey.DownArrow)
+            if (keyInfo.Key == ConsoleKey.DownArrow && possition.X + 1 != 19 && NextIsNotTree(possition, keyInfo.Key))
             {
                 possition.X = possition.X + 1;
-                unit.SetPosition(possition);
             }
-            if (keyInfo.Key == ConsoleKey.LeftArrow)
+            if (keyInfo.Key == ConsoleKey.LeftArrow && possition.Y - 1 != 0 && NextIsNotTree(possition, keyInfo.Key))
             {
                 possition.Y = possition.Y - 1;
-                unit.SetPosition(possition);
             }
-            if (keyInfo.Key == ConsoleKey.RightArrow)
+            if (keyInfo.Key == ConsoleKey.RightArrow && possition.Y + 1 != 39 && NextIsNotTree(possition, keyInfo.Key))
             {
                 possition.Y = possition.Y + 1;
-                unit.SetPosition(possition);
+            }
+        }
+
+        private bool NextIsNotTree(Position pos, ConsoleKey key)
+        {
+            bool isTree = false;
+            bool isItem = false;
+
+            if (key == ConsoleKey.UpArrow)
+            {
+                isTree = map[pos.X - 1, pos.Y] != (char)15;
+                isItem = map[pos.X - 1, pos.Y] == (char)14;
+
+            }
+            if (key == ConsoleKey.DownArrow)
+            {
+                isTree = map[pos.X + 1, pos.Y] != (char)15;
+                isItem = map[pos.X + 1, pos.Y] == (char)14;
+
+            }
+            if (key == ConsoleKey.LeftArrow)
+            {
+                isTree = map[pos.X, pos.Y - 1] != (char)15;
+                isItem = map[pos.X, pos.Y - 1] == (char)14;
+
+            }
+            if (key == ConsoleKey.RightArrow)
+            {
+                isTree = map[pos.X, pos.Y + 1] != (char)15;
+                isItem = map[pos.X, pos.Y + 1] == (char)14;
+
+            }
+            if (isItem)
+            {
+                unit.Points = unit.Points + 100;
             }
 
+            return isTree;
         }
 
         public void Print()
@@ -72,8 +106,8 @@ namespace ConsoleGame
             Console.Clear();
 
             Position possition = unit.GetPossition();
-            
-            map[possition.X, possition.Y] = (char) 1;
+
+            map[possition.X, possition.Y] = (char)1;
 
             for (int i = 0; i < 20; i++)
             {
@@ -83,6 +117,8 @@ namespace ConsoleGame
                 }
                 Console.WriteLine();
             }
+
+            Console.WriteLine(unit.Points);
         }
 
     }
