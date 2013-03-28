@@ -2,14 +2,20 @@
 {
     public class Unit
     {
-	    //Default possition for unit.
-        Position position = new Position(1, 1);
+        //Default possition for unit.
+        private Position position = new Position(1, 1);
+        private int points;
 
-        public int Points;
-
-        public Position GetPossition()
+        public Position Possition
         {
-            return position;
+            get { return position; }
+            set { position = value; }
+        }
+
+        public int Points
+        {
+            get { return points; }
+            set { points = value; }
         }
     }
 }

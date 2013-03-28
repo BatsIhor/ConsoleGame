@@ -1,10 +1,35 @@
 ﻿using System;
+using System.Threading;
 
 namespace ConsoleGame
 {
     class Program
     {
         static void Main(string[] args)
+        {
+            Map map = CreateMap();
+
+            for (; ; )
+            {
+                ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
+
+                while (!Console.KeyAvailable)
+                {
+                    map.MoveUnit(consoleKeyInfo);
+
+                    map.MoveBots();
+
+                    map.Print();
+                    Thread.Sleep(100);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Add walls and points
+        /// </summary>
+        /// <returns></returns>
+        private static Map CreateMap()
         {
             Map map = new Map();
 
@@ -88,7 +113,7 @@ namespace ConsoleGame
             Position position77 = new Position(2, 24);
             Position position78 = new Position(2, 23);
             Position position79 = new Position(2, 22);
-            
+
             // Walls
             map.AddElement(15, position);
             map.AddElement(15, position1);
@@ -188,16 +213,7 @@ namespace ConsoleGame
 
             map.Print();
 
-            for (; ; )
-            {
-                ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
-                
-                //move 
-                map.MoveUnit(consoleKeyInfo);
-                
-                //print
-                map.Print();
-            }
+            return map;
         }
     }
 }

@@ -3,13 +3,14 @@
 namespace ConsoleGame
 {
     /// <summary>
-    /// our map logic
+    /// Our map logic
     /// </summary>
     public class Map
     {
         char[,] map = new char[20, 40];
 
         public Unit unit = new Unit();
+        public Unit bot = new Unit();
 
         public Map()
         {
@@ -30,6 +31,9 @@ namespace ConsoleGame
                     }
                 }
             }
+
+            bot.Possition = new Position(15, 15);
+
         }
 
         public void AddElement(char element, Position pos)
@@ -44,10 +48,12 @@ namespace ConsoleGame
 
         public void MoveUnit(ConsoleKeyInfo keyInfo)
         {
-            Position possition = unit.GetPossition();
+            Position possition = unit.Possition;
+            Position bot_possition = bot.Possition;
 
             //Clear current position.
             map[possition.X, possition.Y] = (char)0;
+            map[bot_possition.X, bot_possition.Y] = (char)0;
 
             if (keyInfo.Key == ConsoleKey.UpArrow && possition.X - 1 != 0 && NextIsNotTree(possition, keyInfo.Key))
             {
@@ -65,6 +71,78 @@ namespace ConsoleGame
             {
                 possition.Y = possition.Y + 1;
             }
+        }
+
+        public void MoveBots()
+        {
+            Position possition = unit.Possition;
+
+            Position bot_possition = bot.Possition;
+
+            if (possition.X > bot_possition.X)
+            {
+                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.DownArrow, false, false, false);
+
+                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                {
+                    bot_possition.X = bot_possition.X + 1;
+                }
+                return;
+            }
+            else if (possition.X < bot_possition.X)
+            {
+                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.UpArrow, false, false, false);
+
+                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                {
+                    bot_possition.X = bot_possition.X - 1;
+                }
+                return;
+            }
+
+            if (possition.Y > bot_possition.Y)
+            {
+                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.RightArrow, false, false, false);
+
+                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                {
+                    bot_possition.Y = bot_possition.Y + 1;
+                }
+                return;
+            }
+            else if (possition.Y < bot_possition.Y)
+            {
+                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.LeftArrow, false, false, false);
+
+                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                {
+
+                    bot_possition.Y = bot_possition.Y - 1;
+                }
+                return;
+            }
+        }
+        
+        public void Print()
+        {
+            Console.SetCursorPosition(0, 0);
+
+            Position possition = unit.Possition;
+            Position bot_possition = bot.Possition;
+
+            map[possition.X, possition.Y] = (char)1;
+            map[bot_possition.X, bot_possition.Y] = (char)2;
+
+            for (int i = 0; i < 20; i++)
+            {
+                for (int j = 0; j < 40; j++)
+                {
+                    Console.Write(map[i, j]);
+                }
+                Console.WriteLine();
+            }
+
+            Console.WriteLine(unit.Points);
         }
 
         private bool NextIsNotTree(Position pos, ConsoleKey key)
@@ -103,26 +181,5 @@ namespace ConsoleGame
 
             return isTree;
         }
-
-        public void Print()
-        {
-            Console.Clear();
-
-            Position possition = unit.GetPossition();
-
-            map[possition.X, possition.Y] = (char)1;
-
-            for (int i = 0; i < 20; i++)
-            {
-                for (int j = 0; j < 40; j++)
-                {
-                    Console.Write(map[i, j]);
-                }
-                Console.WriteLine();
-            }
-
-            Console.WriteLine(unit.Points);
-        }
-
     }
 }
