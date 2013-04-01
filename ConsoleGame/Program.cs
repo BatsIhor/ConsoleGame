@@ -9,6 +9,24 @@ namespace ConsoleGame
         {
             Map map = CreateMap();
 
+            Player unit = new Player();
+            Unit bot = new Unit();
+            Unit bot1 = new Unit();
+            
+            map.units[0] = unit;
+            map.units[1] = bot;
+            map.units[2] = bot1;
+
+            unit.Face = (char)1;
+
+            bot.Face = (char)2;
+            bot.Possition = new Position(15, 15);
+
+            bot1.Face = (char)3;
+            bot1.Possition = new Position(16, 16);
+
+            map.Print();
+
             for (; ; )
             {
                 ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
@@ -20,7 +38,12 @@ namespace ConsoleGame
                     map.MoveBots();
 
                     map.Print();
-                    Thread.Sleep(100);
+
+                    Thread.Sleep(50);
+                    //if (map.gameOver)
+                    //{
+                    //    break;
+                    //}
                 }
             }
         }
@@ -211,9 +234,7 @@ namespace ConsoleGame
             map.AddElement(14, item_position4);
             map.AddElement(14, item_position5);
 
-            map.Print();
-
-            return map;
+           return map;
         }
     }
 }

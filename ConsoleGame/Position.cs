@@ -16,6 +16,5 @@ namespace ConsoleGame
             X = x;
             Y = y;
         }
-
     }
 }

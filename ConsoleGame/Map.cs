@@ -9,8 +9,9 @@ namespace ConsoleGame
     {
         char[,] map = new char[20, 40];
 
-        public Unit unit = new Unit();
-        public Unit bot = new Unit();
+        public bool gameOver = false;
+
+        public Unit[] units = new Unit[3];
 
         public Map()
         {
@@ -31,9 +32,6 @@ namespace ConsoleGame
                     }
                 }
             }
-
-            bot.Possition = new Position(15, 15);
-
         }
 
         public void AddElement(char element, Position pos)
@@ -48,26 +46,24 @@ namespace ConsoleGame
 
         public void MoveUnit(ConsoleKeyInfo keyInfo)
         {
-            Position possition = unit.Possition;
-            Position bot_possition = bot.Possition;
+            Position possition = units[0].Possition;
 
             //Clear current position.
             map[possition.X, possition.Y] = (char)0;
-            map[bot_possition.X, bot_possition.Y] = (char)0;
 
-            if (keyInfo.Key == ConsoleKey.UpArrow && possition.X - 1 != 0 && NextIsNotTree(possition, keyInfo.Key))
+            if (keyInfo.Key == ConsoleKey.UpArrow && possition.X - 1 != 0 && NextIsNotTree(possition, keyInfo.Key, false))
             {
                 possition.X = possition.X - 1;
             }
-            if (keyInfo.Key == ConsoleKey.DownArrow && possition.X + 1 != 19 && NextIsNotTree(possition, keyInfo.Key))
+            if (keyInfo.Key == ConsoleKey.DownArrow && possition.X + 1 != 19 && NextIsNotTree(possition, keyInfo.Key, false))
             {
                 possition.X = possition.X + 1;
             }
-            if (keyInfo.Key == ConsoleKey.LeftArrow && possition.Y - 1 != 0 && NextIsNotTree(possition, keyInfo.Key))
+            if (keyInfo.Key == ConsoleKey.LeftArrow && possition.Y - 1 != 0 && NextIsNotTree(possition, keyInfo.Key, false))
             {
                 possition.Y = possition.Y - 1;
             }
-            if (keyInfo.Key == ConsoleKey.RightArrow && possition.Y + 1 != 39 && NextIsNotTree(possition, keyInfo.Key))
+            if (keyInfo.Key == ConsoleKey.RightArrow && possition.Y + 1 != 39 && NextIsNotTree(possition, keyInfo.Key, false))
             {
                 possition.Y = possition.Y + 1;
             }
@@ -75,77 +71,104 @@ namespace ConsoleGame
 
         public void MoveBots()
         {
-            Position possition = unit.Possition;
+            Position possition = units[0].Possition;
 
-            Position bot_possition = bot.Possition;
-
-            if (possition.X > bot_possition.X)
+            for (int i = 1; i < units.Length; i++)
             {
-                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.DownArrow, false, false, false);
+                Position bot_possition = units[i].Possition;
 
-                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                map[bot_possition.X, bot_possition.Y] = (char)0;
+
+                if (possition.X > bot_possition.X)
                 {
-                    bot_possition.X = bot_possition.X + 1;
-                }
-                return;
-            }
-            else if (possition.X < bot_possition.X)
-            {
-                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.UpArrow, false, false, false);
+                    ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.DownArrow, false, false, false);
 
-                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                    if (NextIsNotTree(bot_possition, fictionKey.Key, true))
+                    {
+                        bot_possition.X = bot_possition.X + 1;
+                        continue;
+                    }
+                }
+                else if (possition.X < bot_possition.X)
                 {
-                    bot_possition.X = bot_possition.X - 1;
+                    ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.UpArrow, false, false, false);
+
+                    if (NextIsNotTree(bot_possition, fictionKey.Key, true))
+                    {
+                        bot_possition.X = bot_possition.X - 1;
+                        continue;
+                    }
                 }
-                return;
-            }
 
-            if (possition.Y > bot_possition.Y)
-            {
-                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.RightArrow, false, false, false);
-
-                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                if (possition.Y > bot_possition.Y)
                 {
-                    bot_possition.Y = bot_possition.Y + 1;
-                }
-                return;
-            }
-            else if (possition.Y < bot_possition.Y)
-            {
-                ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.LeftArrow, false, false, false);
+                    ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.RightArrow, false, false, false);
 
-                if (NextIsNotTree(bot_possition, fictionKey.Key))
+                    if (NextIsNotTree(bot_possition, fictionKey.Key, true))
+                    {
+                        bot_possition.Y = bot_possition.Y + 1;
+                        continue;
+                    }
+                }
+                else if (possition.Y < bot_possition.Y)
                 {
+                    ConsoleKeyInfo fictionKey = new ConsoleKeyInfo('0', ConsoleKey.LeftArrow, false, false, false);
 
-                    bot_possition.Y = bot_possition.Y - 1;
+                    if (NextIsNotTree(bot_possition, fictionKey.Key, true))
+                    {
+                        bot_possition.Y = bot_possition.Y - 1;
+                        continue;
+                    }
                 }
-                return;
+
             }
         }
-        
+
+        private void IsKilled()
+        {
+            for (int i = 1; i < units.Length; i++)
+            {
+                if (units[0].Possition.X == units[i].Possition.X && units[0].Possition.Y == units[i].Possition.Y)
+                {
+                    gameOver = true;
+                }
+            }
+        }
+
         public void Print()
         {
-            Console.SetCursorPosition(0, 0);
-
-            Position possition = unit.Possition;
-            Position bot_possition = bot.Possition;
-
-            map[possition.X, possition.Y] = (char)1;
-            map[bot_possition.X, bot_possition.Y] = (char)2;
-
-            for (int i = 0; i < 20; i++)
+            if (!gameOver)
             {
-                for (int j = 0; j < 40; j++)
+                for (int x = 0; x < units.Length; x++)
                 {
-                    Console.Write(map[i, j]);
+                    Console.SetCursorPosition(0, 0);
+
+                    map[units[x].Possition.X, units[x].Possition.Y] = units[x].Face;
+
+                    for (int i = 0; i < 20; i++)
+                    {
+                        for (int j = 0; j < 40; j++)
+                        {
+                            Console.Write(map[i, j]);
+                        }
+                        Console.WriteLine();
+                    }
+
+                    Player player = (Player)units[0];
+
+                    Console.WriteLine(player.Points);
                 }
-                Console.WriteLine();
+            }
+            else
+            {
+                Console.SetCursorPosition(12, 10);
+                Console.Write("-= Game Over =-");
             }
 
-            Console.WriteLine(unit.Points);
+            IsKilled();
         }
 
-        private bool NextIsNotTree(Position pos, ConsoleKey key)
+        private bool NextIsNotTree(Position pos, ConsoleKey key, bool isBot)
         {
             bool isTree = false;
             bool isItem = false;
@@ -174,9 +197,10 @@ namespace ConsoleGame
                 isItem = map[pos.X, pos.Y + 1] == (char)14;
 
             }
-            if (isItem)
+            if (isItem && !isBot)
             {
-                unit.Points = unit.Points + 100;
+                Player player = (Player)units[0];
+                player.Points = player.Points + 100;
             }
 
             return isTree;
